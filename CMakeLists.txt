@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   Upload.srv
+  MultipleUpload.srv
 )
 
 generate_messages(

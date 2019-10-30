@@ -9,6 +9,8 @@ from pydrive.drive import GoogleDrive
 from pydrive.files import ApiRequestError
 import rospy
 
+from gdrive_ros.srv import MultipleUpload
+from gdrive_ros.srv import MultipleUploadResponse
 from gdrive_ros.srv import Upload
 from gdrive_ros.srv import UploadResponse
 
@@ -31,15 +33,19 @@ class GDriveServerNode(object):
         self.gdrive = GoogleDrive(self.gauth)
         rospy.loginfo('Google drive authentication finished.')
         self.upload_server = rospy.Service('~upload', Upload, self._upload_cb)
+        self.upload_multi_server = rospy.Service(
+            '~upload_multi', MultipleUpload, self._upload_multi_cb)
 
     def _upload_cb(self, req):
         timestamp = '{0:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
         parents_path = req.parents_path
         parents_id = req.parents_id
-        file_title = req.file_title
-        file_path = os.path.expanduser(req.file_path)
+
+        # response initialization
         res = UploadResponse()
         res.success = False
+        res.file_id = ''
+        res.file_url = ''
 
         if parents_id and parents_path:
             rospy.logerr('parents_path and parents_id is both set.')
@@ -70,23 +76,89 @@ class GDriveServerNode(object):
                         timestamp, self.folder_url_format.format(parents_id)))
                 return res
 
+        success, file_id, file_url = self._upload_step(
+            req.file_path, req.file_title, parents_id,
+            req.use_timestamp_file_title, timestamp)
+        res.success = success
+        res.file_id = file_id
+        res.file_url = file_url
+        res.parents_id = parents_id
+        res.parents_url = self.folder_url_format.format(parents_id)
+        return res
+
+    def _upload_multi_cb(self, req):
+        timestamp = '{0:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
+        parents_path = req.parents_path
+        parents_id = req.parents_id
+
+        # response initialization
+        res = MultipleUploadResponse()
+        res.successes = [False] * len(req.file_titles)
+        res.file_ids = [''] * len(req.file_titles)
+        res.file_urls = [''] * len(req.file_titles)
+
+        if parents_id and parents_path:
+            rospy.logerr('parents_path and parents_id is both set.')
+            rospy.logerr('parents_id: {} is selected to upload.')
+            parents_path = ''
+
+        if parents_path:
+            try:
+                parents_id = self._get_parents_id(
+                    parents_path, mkdir=True)
+            except (ValueError, ApiRequestError) as e:
+                rospy.logerr(e)
+                rospy.logerr(
+                    'Failed to get parents_id: {}'.format(parents_path))
+                return res
+        # root
+        elif parents_id == '' and parents_path == '':
+            parents_id = ''
+
+        if req.use_timestamp_folder:
+            try:
+                parents_id = self._get_parents_id(
+                    [timestamp], parents_id=parents_id, mkdir=True)
+            except (ValueError, ApiRequestError) as e:
+                rospy.logerr(e)
+                rospy.logerr(
+                    'Failed to get parents_id: {} in {}'.format(
+                        timestamp, self.folder_url_format.format(parents_id)))
+                return res
+
+        for i, (file_path, file_title) in enumerate(
+                zip(req.file_paths, req.file_titles)):
+            success, file_id, file_url = self._upload_step(
+                file_path, file_title, parents_id,
+                req.use_timestamp_file_title, timestamp)
+            res.successes[i] = success
+            res.file_ids[i] = file_id
+            res.file_urls[i] = file_url
+        res.parents_id = parents_id
+        res.parents_url = self.folder_url_format.format(parents_id)
+        return res
+
+    def _upload_step(self, file_path, file_title, parents_id,
+                     use_timestamp_file_title=False, timestamp=None):
         file_title = file_title if file_title else file_path.split('/')[-1]
-        if req.use_timestamp_file_title:
+        file_path = os.path.expanduser(file_path)
+        if use_timestamp_file_title:
             file_title = '{}_{}'.format(timestamp, file_title)
 
+        success = False
+        file_id = ''
+        file_url = ''
         try:
             file_id = self._upload_file(
                 file_path, file_title, parents_id=parents_id)
-            res.success = True
-            res.file_id = file_id
-            res.file_url = self.file_url_format.format(file_id)
-            res.parents_id = parents_id
-            res.parents_url = self.folder_url_format.format(parents_id)
+            file_url = self.file_url_format.format(file_id)
+            success = True
         except ApiRequestError as e:
             rospy.logerr(e)
-            rospy.logerr('Failed to upload: {} -> {}',
-                         file_path, self.folder_url_format.format(parents_id))
-        return res
+            rospy.logerr(
+                'Failed to upload: {} -> {}', file_path,
+                self.folder_url_format.format(parents_id))
+        return success, file_id, file_url
 
     def _upload_file(self, file_path, file_title, parents_id=None):
         rospy.loginfo('Start uploading a file: {}'.format(file_title))
