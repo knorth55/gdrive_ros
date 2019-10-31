@@ -2,11 +2,40 @@
 
 Google Drive file uploader for ROS
 
+## Installation
+
+### Install PyDrive
+
+```bash
+sudo pip install pydrive
+```
+
+### Authentication for Google Drive API 
+
+Please follow [here](https://gsuitedevs.github.io/PyDrive/docs/build/html/quickstart.html#authentication).
+
+### Create your settings yaml
+
+Please follow [here](https://gsuitedevs.github.io/PyDrive/docs/build/html/oauth.html#sample-settings-yaml).
+
+My settings yaml is as follows;
+
+```yaml
+client_config_file: /your/client/secrets/json/path
+save_credentials: True
+save_credentials_backend: file
+save_credentials_file: /your/credentials/json/path
+get_refresh_token: True
+oauth_scope:
+  - https://www.googleapis.com/auth/drive.file
+```
+
 ## Usage
 
 ### Run server
 ```bash
-rosrun gdrive_ros gdrive_server_node.py
+export GOOGLE_DRIVE_SETTINGS_YAML=/your/settings/yaml/path
+roslaunch gdrive_ros gdrive_server.launch
 ```
 
 ### Call upload service
