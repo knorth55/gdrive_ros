@@ -18,6 +18,28 @@ rosservice call /gdrive_ros/upload ...
 rosservice call /gdrive_ros/upload_multi ...
 ```
 
+## Parameters
+
+- `~settings_yaml` (`string, default: `None`)
+
+PyDrive settings yaml path
+
+- `~share_type` (`string`, default: `anyone`)
+
+Uploaded file share type
+
+- `~share_value` (`string`, default: `anyone`)
+
+Uploaded file share value
+
+- `~share_role` (`string`, default: `reader`)
+
+Uploaded file share role
+
+- `~share_with_link` (`bool`, default: `true`)
+
+Uploaded file share with link or not 
+
 ## Services
 
 ### `gdrive_ros/Upload`
@@ -26,7 +48,7 @@ This service is for uploading single file in same Google Drive folder.
 
 **Request**
 
-- `file_path` (`string`: default `''`)
+- `file_path` (`string`, default: `''`)
 
 Uploaded file path
 
@@ -35,24 +57,24 @@ Uploaded file path
 Uploaded file title in Google Drive
 
 
-- `parents_path` (`string`: default `''`)
+- `parents_path` (`string`, default: `''`)
 
 Parents path in Google Drive splitted by `/`
 
 
-- `parents_id` (`string`: default `''`)
+- `parents_id` (`string`, default: `''`)
 
 Parents id in Google Drive
 
 If both `parents_path` and `parents_id` are set , `parents_id` will be used.
 
-- `use_timestamp_folder` (`bool`: default `false`)
+- `use_timestamp_folder` (`bool`, default: `false`)
 
 Use timestamp folder to upload
 
 Uploaded file will be saved in `file_path/timestamp` folder.
 
-- `use_timestamp_file_title` (`bool`: default `false`)
+- `use_timestamp_file_title` (`bool`, default: `false`)
 
 Use timestamp for `file_title`
 
@@ -87,7 +109,7 @@ This service is for uploading multiple files in same Google Drive folder.
 
 **Request**
 
-- `file_paths` (`string[]`: default `[]`)
+- `file_paths` (`string[]`, default: `[]`)
 
 Uploaded file paths
 
@@ -96,24 +118,24 @@ Uploaded file paths
 Uploaded file titles in Google Drive
 
 
-- `parents_path` (`string`: default `''`)
+- `parents_path` (`string`, default: `''`)
 
 Parents path in Google Drive splitted by `/`
 
 
-- `parents_id` (`string`: default `''`)
+- `parents_id` (`string`, default: `''`)
 
 Parents id in Google Drive
 
 If both `parents_path` and `parents_id` are set , `parents_id` will be used.
 
-- `use_timestamp_folder` (`bool`: default `false`)
+- `use_timestamp_folder` (`bool`, default: `false`)
 
 Use timestamp folder to upload
 
 Uploaded file will be saved in `file_path/timestamp` folder.
 
-- `use_timestamp_file_title` (`bool`: default `false`)
+- `use_timestamp_file_title` (`bool`, default: `false`)
 
 Use timestamp for `file_title`
 
