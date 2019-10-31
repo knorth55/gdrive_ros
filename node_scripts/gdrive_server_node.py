@@ -22,6 +22,10 @@ class GDriveServerNode(object):
 
     def __init__(self):
         settings_yaml = rospy.get_param('~settings_yaml', None)
+        self.share_type = rospy.get_param('~share_type', 'anyone')
+        self.share_value = rospy.get_param('~share_value', 'anyone')
+        self.share_role = rospy.get_param('~share_role', 'reader')
+        self.share_with_link = rospy.get_param('~share_with_link', True)
         if settings_yaml is not None:
             self.gauth = GoogleAuth(settings_yaml)
         else:
@@ -170,6 +174,12 @@ class GDriveServerNode(object):
         gfile.SetContentFile(file_path)
         gfile['title'] = file_title
         gfile.Upload()
+        gfile.InsertPermission({
+            'type': self.share_type,
+            'value': self.share_value,
+            'role': self.share_role,
+            'withLink': self.share_with_link,
+        })
         rospy.loginfo('Finish uploading a file: {}'.format(file_title))
         return gfile['id']
 
