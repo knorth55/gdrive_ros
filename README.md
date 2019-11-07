@@ -4,10 +4,16 @@ Google Drive file uploader for ROS
 
 ## Installation
 
-### Install PyDrive
+### Setup and build workspace 
 
 ```bash
-sudo pip install pydrive
+cd ~
+mkdir gdrive_ws/src -p
+cd gdrive_ws/src
+git clone https://github.com/knorth55/gdrive_ros.git
+rosdep install --ignore-src -from-paths . -y -r -i
+cd ~/gdrive_ws
+catkin build
 ```
 
 ### Authentication for Google Drive API 
