@@ -1,4 +1,6 @@
 # gdrive_ros
+[![GitHub version](https://badge.fury.io/gh/knorth55%2Fgdrive_ros.svg)](https://badge.fury.io/gh/knorth55%2Fgdrive_ros)
+[![Build Status](https://travis-ci.com/knorth55/gdrive_ros.svg?branch=master)](https://travis-ci.com/knorth55/gdrive_ros)
 
 Google Drive file uploader for ROS
 
