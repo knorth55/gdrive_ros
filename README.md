@@ -89,7 +89,7 @@ This service is for uploading single file in same Google Drive folder.
 
   - Uploaded file path
 
-- `file_title` (`string`: `file_path.split('/')[-1]`)
+- `file_title` (`string`: default: `file_path.split('/')[-1]`)
 
   - Uploaded file title in Google Drive
 
@@ -150,7 +150,7 @@ This service is for uploading multiple files in same Google Drive folder.
 
   - Uploaded file paths
 
-- `file_titles` (`string`: `[f for f in file_paths.split('/')[-1]]`)
+- `file_titles` (`string[]`: default: `[f for f in file_paths.split('/')[-1]]`)
 
   - Uploaded file titles in Google Drive
 
