@@ -1,3 +1,5 @@
+# This package is moved to [jsk_3rdparty](https://github.com/jsk-ros-pkg/jsk_3rdparty/tree/master/gdrive_ros)
+
 # gdrive_ros
 [![GitHub version](https://badge.fury.io/gh/knorth55%2Fgdrive_ros.svg)](https://badge.fury.io/gh/knorth55%2Fgdrive_ros)
 [![Build Status](https://travis-ci.com/knorth55/gdrive_ros.svg?branch=master)](https://travis-ci.com/knorth55/gdrive_ros)
